@@ -58,8 +58,8 @@ class App extends Component<IProps, IState> {
     }
   }
 
-  async componentDidMount() {
-    await this.workWithServer('GET', null)
+  componentDidMount() {
+    this.workWithServer('GET', null)
   }
 
   addTodo(value: string): void {
