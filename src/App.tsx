@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './App.css'
+import './App.scss'
 import NameProject from './components/NameProject'
 import ListTodos from './components/ListTodos'
 import { InputUsers } from './components/InputUsers'
