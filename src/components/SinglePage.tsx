@@ -1,28 +1,18 @@
-import { Component, ReactNode } from 'react'
+import { Component, ErrorInfo, ReactNode } from 'react'
 import { withRouter } from './hoc/createWithrouter'
 import { Link } from 'react-router-dom'
+import { workWithServer } from '../module/workWithServer'
+import IUser from './context/PostsContext'
+import { WithRouterProps } from './hoc/createWithrouter'
 
-interface IComponent {
-  userId?: number
-  id?: number
-  title?: string
-  body?: string
+type IComponent = Partial<IUser>
+
+interface IState {
+  post: IComponent
 }
 
-interface IPromsExtra {
-  location: {
-    pathname: string
-    search: string
-    hash: string
-    state: null | string
-    key: string
-  }
-  navigate: () => void
-  params: { id: string }
-}
-
-class SinglePage extends Component<IPromsExtra, { post: IComponent }> {
-  constructor(props: IPromsExtra) {
+class SinglePage extends Component<WithRouterProps, IState> {
+  constructor(props: WithRouterProps) {
     super(props)
 
     this.state = {
@@ -30,16 +20,10 @@ class SinglePage extends Component<IPromsExtra, { post: IComponent }> {
     }
   }
 
-  async componentDidMount() {
-    try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/posts/${this.props.params.id}`
-      )
-      const data = await response.json()
+  componentDidMount(): void {
+    workWithServer('GET', null, `${this.props.params.id}`).then((data) =>
       this.setState({ post: data })
-    } catch (err) {
-      console.log(err)
-    }
+    )
   }
   render(): JSX.Element {
     const { title, body } = this.state.post

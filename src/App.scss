@@ -4,7 +4,7 @@
 }
 
 .App h1 {
-  font-size: 70px;
+  font-size: 7.5rem;
   color: lightslategray;
 }
 .wrapperUl {
@@ -30,19 +30,19 @@
   cursor: pointer;
 }
 
-.formAddTodo input {
+.formAddPost input {
   width: 30%;
   height: 30px;
   margin: 10px 5px;
   font-size: 20px;
 }
 
-.formAddTodo button {
+.formAddPost button {
   height: 25px;
   cursor: pointer;
   background: lightblue;
 }
-.formAddTodo button:hover {
+.formAddPost button:hover {
   background-color: lightgreen;
 }
 .checkBox {

@@ -1,41 +1,38 @@
 import { Component } from 'react'
+import { PostsContext } from './context/PostsContext'
 
-interface IText {
-  text: string
-}
-interface IProps {
-  addTodo: (value: string) => void
-}
-class InputUsers extends Component<IProps, IText> {
-  constructor(props: IProps) {
-    super(props)
-
-    this.state = {
-      text: '',
-    }
+class InputUsers extends Component {
+  state = {
+    text: '',
   }
+
+  static contextType = PostsContext
+  context!: React.ContextType<typeof PostsContext>
 
   onSubmitForm(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault()
   }
-
+  createInput(): JSX.Element {
+    return (
+      <input
+        placeholder="Write post"
+        value={this.state.text}
+        onChange={(e) => this.setState({ text: e.target.value })}
+      />
+    )
+  }
+  clickBtn(): void {
+    this.context.addPost(this.state.text)
+    this.setState({ text: '' })
+  }
   render(): JSX.Element {
     return (
       <div>
-        <form className="formAddTodo" onSubmit={this.onSubmitForm}>
-          <input
-            placeholder="Write todo"
-            value={this.state.text}
-            onChange={(e) => this.setState({ text: e.target.value })}
-          />
-          <button
-            type="submit"
-            onClick={() => {
-              this.props.addTodo(this.state.text)
-              this.setState({ text: '' })
-            }}
-          >
-            Add Todo
+        <h1>Posts List</h1>
+        <form className="formAddPost" onSubmit={this.onSubmitForm}>
+          {this.createInput()}
+          <button type="submit" onClick={() => this.clickBtn()}>
+            Add Post
           </button>
         </form>
       </div>
