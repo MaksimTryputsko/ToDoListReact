@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
-import { workWithServer } from '../../module/workWithServer'
-
+import { sendRequest } from '../../module/sendRequest'
+import { URL_POSTS } from '../../module/sendRequest'
 const defaultValues = {
-  users: [],
+  posts: [],
   addPost: () => {},
   deletePost: () => {},
   deleteCompletedPost: () => {},
   togglePost: () => {},
-  setPosts: () => {},
+  addPostsElements: () => {},
 }
 
 interface PortalProps {
@@ -19,7 +19,8 @@ type IContext = {
   deletePost: (index: number, value: string | number) => void
   deleteCompletedPost: () => void
   togglePost: (id: number, changeUserId: number) => void
-  users?: IUser[]
+  addPostsElements: (value: IUser[]) => void
+  posts?: IUser[]
 }
 
 interface IUser {
@@ -31,80 +32,85 @@ interface IUser {
 
 const PostsContext = React.createContext<IContext>(defaultValues)
 
-class PostsProvider extends Component<PortalProps, { users: IUser[] }> {
+class PostsProvider extends Component<PortalProps, { posts: IUser[] }> {
   constructor(props: { children: React.ReactNode }) {
     super(props)
 
     this.state = {
-      users: [],
+      posts: [],
     }
-    this.addPost = this.addPost.bind(this)
-    this.deletePost = this.deletePost.bind(this)
-    this.deleteCompletedPost = this.deleteCompletedPost.bind(this)
-    this.togglePost = this.togglePost.bind(this)
   }
 
-  componentDidMount(): void {
-    workWithServer('GET', null).then((data) =>
-      this.setState({ users: data.splice(0, 10) })
+  addPost = (value: string): void => {
+    const postElement: Omit<IUser, 'id'> = {
+      userId: 1,
+      title: value,
+      body: 'Hello from body',
+    }
+
+    sendRequest({ method: 'POST', body: postElement, path: URL_POSTS }).then(
+      (data) =>
+        this.setState({
+          posts: [
+            ...this.state.posts,
+            {
+              id: data.id,
+              title: data.title,
+              body: data.body,
+              userId: data.userId,
+            },
+          ],
+        })
     )
   }
 
-  addPost(value: string): void {
-    this.setState({
-      users: [
-        ...this.state.users,
-        {
-          id: this.state.users.length + 1,
-          title: value,
-          body: 'Hello from body',
-          userId: 1,
-        },
-      ],
-    })
-    workWithServer('POST', this.state.users.at(-1))
+  addPostsElements = (value: IUser[]): void => {
+    this.setState({ posts: value })
   }
 
-  deletePost(index: number, value: string | number): void {
-    this.setState({
-      users: [...this.state.users].filter((_, indX) => indX !== index),
-    })
-    workWithServer('DELETE', null, `${value}`)
+  deletePost = (index: number, value: string | number): void => {
+    sendRequest({ method: 'DELETE', path: `${URL_POSTS}${value}` }).then(() =>
+      this.setState({
+        posts: [...this.state.posts].filter((_, indX) => indX !== index),
+      })
+    )
   }
 
-  deleteCompletedPost(): void {
-    const getDeleteItem = this.state.users.filter(
+  deleteCompletedPost = (): void => {
+    const getDeleteItem = this.state.posts.filter(
       (item: IUser) => item.userId > 1
     )
+
     getDeleteItem.forEach((item: IUser) =>
-      workWithServer('DELETE', null, `${item.id}`)
+      sendRequest({ method: 'DELETE', path: `${URL_POSTS}${item.id}` }).then(
+        () => {
+          this.setState({
+            posts: this.state.posts.filter((item) => item.userId === 1),
+          })
+        }
+      )
     )
-    this.setState({
-      users: [...this.state.users].filter((item) => item.userId === 1),
-    })
   }
 
-  togglePost(id: number, changeUserId: number): void {
+  togglePost = (id: number, changeUserId: number): void => {
     this.setState({
-      users: [...this.state.users].map((user) =>
+      posts: this.state.posts.map((user) =>
         user.id === id ? { ...user, userId: changeUserId } : { ...user }
       ),
     })
   }
 
   render(): React.ReactElement<PortalProps> {
-    const users = this.state.users
     const { children } = this.props
-    const { addPost, deletePost, deleteCompletedPost, togglePost } = this
-
     return (
       <PostsContext.Provider
         value={{
-          addPost,
-          deletePost,
-          deleteCompletedPost,
-          togglePost,
-          users,
+          addPost: this.addPost,
+          deletePost: this.deletePost,
+          deleteCompletedPost: this.deleteCompletedPost,
+          togglePost: this.togglePost,
+          addPostsElements: this.addPostsElements,
+          posts: this.state.posts,
         }}
       >
         {children}
@@ -112,5 +118,6 @@ class PostsProvider extends Component<PortalProps, { users: IUser[] }> {
     )
   }
 }
+
 export default IUser
 export { PostsProvider, PostsContext }

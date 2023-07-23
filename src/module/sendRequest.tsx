@@ -1,16 +1,17 @@
 import IUser from '../components/context/PostsContext'
 
-const url = 'https://jsonplaceholder.typicode.com/posts/'
-
-const workWithServer = async (
-  method: string,
-  body?: IUser | null,
-  path: string = ''
-) => {
+const URL = 'https://jsonplaceholder.typicode.com/'
+const URL_POSTS = 'posts/'
+interface ISendRequest {
+  method?: string
+  body?: IUser | null | Omit<IUser, 'id'>
+  path?: string
+}
+const sendRequest = async ({ method, body, path = '' }: ISendRequest = {}) => {
   const newBody: string | undefined = body ? JSON.stringify(body) : undefined
 
   try {
-    const response = await fetch(`${url}${path}`, {
+    const response = await fetch(`${URL}${path}`, {
       method,
       body: newBody,
       headers: { 'Content-type': 'application/json; charset=UTF-8' },
@@ -22,4 +23,4 @@ const workWithServer = async (
   }
 }
 
-export { workWithServer }
+export { sendRequest, URL_POSTS }

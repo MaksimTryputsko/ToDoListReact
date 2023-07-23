@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import { PostsContext } from './context/PostsContext'
 
-class InputUsers extends Component {
+class InputPosts extends Component {
   state = {
     text: '',
   }
@@ -12,26 +12,26 @@ class InputUsers extends Component {
   onSubmitForm(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault()
   }
-  createInput(): JSX.Element {
-    return (
-      <input
-        placeholder="Write post"
-        value={this.state.text}
-        onChange={(e) => this.setState({ text: e.target.value })}
-      />
-    )
-  }
-  clickBtn(): void {
+  clickBtn = (): void => {
     this.context.addPost(this.state.text)
     this.setState({ text: '' })
+  }
+  onChange(e: React.ChangeEvent<HTMLInputElement>) {
+    this.setState({ text: e.target.value })
   }
   render(): JSX.Element {
     return (
       <div>
         <h1>Posts List</h1>
         <form className="formAddPost" onSubmit={this.onSubmitForm}>
-          {this.createInput()}
-          <button type="submit" onClick={() => this.clickBtn()}>
+          <input
+            placeholder="Write post"
+            value={this.state.text}
+            onChange={(e) => {
+              this.onChange(e)
+            }}
+          />
+          <button type="submit" onClick={this.clickBtn}>
             Add Post
           </button>
         </form>
@@ -40,4 +40,4 @@ class InputUsers extends Component {
   }
 }
 
-export { InputUsers }
+export { InputPosts }

@@ -1,10 +1,11 @@
 import { Component, ErrorInfo, ReactNode } from 'react'
 import { withRouter } from './hoc/createWithrouter'
 import { Link } from 'react-router-dom'
-import { workWithServer } from '../module/workWithServer'
+import { sendRequest } from '../module/sendRequest'
 import IUser from './context/PostsContext'
 import { WithRouterProps } from './hoc/createWithrouter'
-
+import { POST_PAGE } from './path/path'
+import { URL_POSTS } from '../module/sendRequest'
 type IComponent = Partial<IUser>
 
 interface IState {
@@ -19,11 +20,15 @@ class SinglePage extends Component<WithRouterProps, IState> {
       post: {},
     }
   }
-
+  async sendRequestCreateOnePost() {
+    const getItems = await sendRequest({
+      method: 'GET',
+      path: `${URL_POSTS}/${this.props.params.id}`,
+    })
+    this.setState({ post: getItems })
+  }
   componentDidMount(): void {
-    workWithServer('GET', null, `${this.props.params.id}`).then((data) =>
-      this.setState({ post: data })
-    )
+    this.sendRequestCreateOnePost()
   }
   render(): JSX.Element {
     const { title, body } = this.state.post
@@ -32,20 +37,15 @@ class SinglePage extends Component<WithRouterProps, IState> {
       <div className="wrapperForSinglePage">
         <h1>Hello we have information for you</h1>
         <div>
-          <span>
-            This is title:<br></br>
-          </span>
+          <div>This is title</div>
           {title}
         </div>
         <div>
-          {' '}
-          <span>
-            This is body:<br></br>
-          </span>
+          <div>This is body</div>
           {body}
         </div>
 
-        <Link to="/">
+        <Link to={POST_PAGE}>
           <button>Home page</button>
         </Link>
       </div>

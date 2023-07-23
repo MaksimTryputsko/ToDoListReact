@@ -10,12 +10,9 @@ class DeleteItems extends Component {
     const { deleteCompletedPost } = this.context
 
     return (
-      <div>
-        {' '}
-        <button onClick={deleteCompletedPost}>
-          <BsFillTrash3Fill className="deleteIcon" />
-        </button>
-      </div>
+      <button onClick={deleteCompletedPost}>
+        <BsFillTrash3Fill className="deleteIcon" />
+      </button>
     )
   }
 }

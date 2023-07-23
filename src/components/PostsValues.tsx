@@ -8,24 +8,26 @@ class PostsValues extends Component {
   context!: React.ContextType<typeof PostsContext>
 
   render(): JSX.Element {
-    const { users } = this.context
+    const { posts } = this.context
 
     return (
       <div>
-        <ul className="wrapperUl">
-          {users?.map((el: IUser, index: number) => {
-            return (
-              <PostElement
-                key={el.id}
-                title={el.title}
-                body={el.body}
-                id={el.id}
-                userId={el.userId}
-                index={index}
-              />
-            )
-          })}
-        </ul>
+        {posts !== undefined && (
+          <ul className="wrapperUl">
+            {posts?.map((el: IUser, index: number) => {
+              return (
+                <PostElement
+                  key={el.id}
+                  title={el.title}
+                  body={el.body}
+                  id={el.id}
+                  userId={el.userId}
+                  index={index}
+                />
+              )
+            })}
+          </ul>
+        )}
       </div>
     )
   }

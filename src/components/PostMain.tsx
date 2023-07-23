@@ -1,21 +1,24 @@
 import { Component } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 
 import { SinglePageNew } from './SinglePage'
 import { PostPage } from './PostPage'
 import { ErrorPage } from './ErrorPage'
-import { postPage, errorPage, singlePageNew } from './path/path'
+import { POST_PAGE, ERROR_PAGE, SINGLE_PAGE_NEW, MAIN_PAGE } from './path/path'
+
 class PostMain extends Component {
   render(): JSX.Element {
     return (
       <BrowserRouter>
-        <>
-          <Routes>
-            <Route path={postPage} element={<PostPage />} />
-            <Route path={errorPage} element={<ErrorPage />} />
-            <Route path={singlePageNew} element={<SinglePageNew />} />
-          </Routes>
-        </>
+        <Routes>
+          <Route
+            path={MAIN_PAGE}
+            element={<Navigate replace to={POST_PAGE} />}
+          />
+          <Route path={POST_PAGE} element={<PostPage />} />
+          <Route path={ERROR_PAGE} element={<ErrorPage />} />
+          <Route path={SINGLE_PAGE_NEW} element={<SinglePageNew />} />
+        </Routes>
       </BrowserRouter>
     )
   }
