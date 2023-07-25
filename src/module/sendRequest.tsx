@@ -1,13 +1,13 @@
-import IUser from '../components/context/PostsContext'
+const URL = 'https://jsonplaceholder.typicode.com'
 
-const URL = 'https://jsonplaceholder.typicode.com/'
-const URL_POSTS = 'posts/'
 interface ISendRequest {
-  method?: string
-  body?: IUser | null | Omit<IUser, 'id'>
-  path?: string
+  method: string
+  body?: unknown
+  path: string
 }
-const sendRequest = async ({ method, body, path = '' }: ISendRequest = {}) => {
+const sendRequest = async (
+  { method, body, path }: ISendRequest = {} as ISendRequest
+) => {
   const newBody: string | undefined = body ? JSON.stringify(body) : undefined
 
   try {
@@ -23,4 +23,4 @@ const sendRequest = async ({ method, body, path = '' }: ISendRequest = {}) => {
   }
 }
 
-export { sendRequest, URL_POSTS }
+export { sendRequest }

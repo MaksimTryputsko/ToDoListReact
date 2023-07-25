@@ -1,10 +1,10 @@
-import { Component } from 'react'
+import { Component, Context } from 'react'
 import { BsFillTrash3Fill } from 'react-icons/bs'
-import { PostsContext } from './context/PostsContext'
+import { IContext, PostsContext } from './context/PostsContext'
 
 class DeleteItems extends Component {
   static contextType = PostsContext
-  context!: React.ContextType<typeof PostsContext>
+  context!: React.ContextType<Context<IContext>>
 
   render(): JSX.Element {
     const { deleteCompletedPost } = this.context

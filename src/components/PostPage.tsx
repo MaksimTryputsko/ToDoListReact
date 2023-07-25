@@ -2,19 +2,18 @@ import { Component, Context } from 'react'
 import PostsValues from './PostsValues'
 import { InputPosts } from './InputPosts'
 import { DeleteItems } from './DeleteItems'
-import { PostsContext } from './context/PostsContext'
+import { IContext, PostsContext } from './context/PostsContext'
 import { sendRequest } from '../module/sendRequest'
-import { URL_POSTS } from '../module/sendRequest'
 
 class PostPage extends Component {
   static contextType = PostsContext
-  context!: React.ContextType<typeof PostsContext>
+  context!: React.ContextType<Context<IContext>>
 
-  async addPostsElementsFromServer() {
-    const posts = await sendRequest({ method: 'GET', path: URL_POSTS })
+  addPostsElementsFromServer = async () => {
+    const posts = await sendRequest({ method: 'GET', path: '/posts' })
     this.context.addPostsElements(posts.splice(0, 10))
   }
-  componentDidMount(): void {
+  componentDidMount = (): void => {
     this.addPostsElementsFromServer()
   }
 

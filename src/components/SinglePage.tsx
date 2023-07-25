@@ -1,15 +1,15 @@
-import { Component, ErrorInfo, ReactNode } from 'react'
+import { Component } from 'react'
 import { withRouter } from './hoc/createWithrouter'
 import { Link } from 'react-router-dom'
 import { sendRequest } from '../module/sendRequest'
-import IUser from './context/PostsContext'
+import IPost from './context/PostsContext'
 import { WithRouterProps } from './hoc/createWithrouter'
 import { POST_PAGE } from './path/path'
-import { URL_POSTS } from '../module/sendRequest'
-type IComponent = Partial<IUser>
+
+type IComponent = Partial<IPost>
 
 interface IState {
-  post: IComponent
+  post: IComponent | null
 }
 
 class SinglePage extends Component<WithRouterProps, IState> {
@@ -17,22 +17,26 @@ class SinglePage extends Component<WithRouterProps, IState> {
     super(props)
 
     this.state = {
-      post: {},
+      post: null,
     }
   }
-  async sendRequestCreateOnePost() {
-    const getItems = await sendRequest({
+  sendRequestCreateOnePost = async () => {
+    const post = await sendRequest({
       method: 'GET',
-      path: `${URL_POSTS}/${this.props.params.id}`,
+      path: `/posts/${this.props.params.id}`,
     })
-    this.setState({ post: getItems })
+    if (!!post) {
+      this.setState({ post: post })
+    }
   }
-  componentDidMount(): void {
+  componentDidMount = (): void => {
     this.sendRequestCreateOnePost()
   }
-  render(): JSX.Element {
+  render(): JSX.Element | null {
+    if (!this.state.post) {
+      return null
+    }
     const { title, body } = this.state.post
-
     return (
       <div className="wrapperForSinglePage">
         <h1>Hello we have information for you</h1>

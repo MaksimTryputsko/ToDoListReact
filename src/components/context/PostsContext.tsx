@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { sendRequest } from '../../module/sendRequest'
-import { URL_POSTS } from '../../module/sendRequest'
+
 const defaultValues = {
   posts: [],
   addPost: () => {},
@@ -14,16 +14,16 @@ interface PortalProps {
   children: React.ReactNode
 }
 
-type IContext = {
+export type IContext = {
   addPost: (value: string) => void
   deletePost: (index: number, value: string | number) => void
   deleteCompletedPost: () => void
   togglePost: (id: number, changeUserId: number) => void
-  addPostsElements: (value: IUser[]) => void
-  posts?: IUser[]
+  addPostsElements: (value: IPost[]) => void
+  posts?: IPost[]
 }
 
-interface IUser {
+interface IPost {
   userId: number
   id: number
   title: string
@@ -32,7 +32,7 @@ interface IUser {
 
 const PostsContext = React.createContext<IContext>(defaultValues)
 
-class PostsProvider extends Component<PortalProps, { posts: IUser[] }> {
+class PostsProvider extends Component<PortalProps, { posts: IPost[] }> {
   constructor(props: { children: React.ReactNode }) {
     super(props)
 
@@ -41,55 +41,67 @@ class PostsProvider extends Component<PortalProps, { posts: IUser[] }> {
     }
   }
 
-  addPost = (value: string): void => {
-    const postElement: Omit<IUser, 'id'> = {
+  addPost = async (value: string) => {
+    const postElement: Omit<IPost, 'id'> = {
       userId: 1,
       title: value,
       body: 'Hello from body',
     }
 
-    sendRequest({ method: 'POST', body: postElement, path: URL_POSTS }).then(
-      (data) =>
-        this.setState({
-          posts: [
-            ...this.state.posts,
-            {
-              id: data.id,
-              title: data.title,
-              body: data.body,
-              userId: data.userId,
-            },
-          ],
-        })
-    )
+    const post = await sendRequest({
+      method: 'POST',
+      body: postElement,
+      path: '/posts',
+    })
+    if (!!post) {
+      this.setState({
+        posts: [
+          ...this.state.posts,
+          {
+            id: post.id,
+            title: post.title,
+            body: post.body,
+            userId: post.userId,
+          },
+        ],
+      })
+    }
   }
 
-  addPostsElements = (value: IUser[]): void => {
+  addPostsElements = (value: IPost[]): void => {
     this.setState({ posts: value })
   }
 
-  deletePost = (index: number, value: string | number): void => {
-    sendRequest({ method: 'DELETE', path: `${URL_POSTS}${value}` }).then(() =>
+  deletePost = async (index: number, value: string | number) => {
+    const removePost = await sendRequest({
+      method: 'DELETE',
+      path: `/posts/${value}`,
+    })
+    if (!!removePost) {
       this.setState({
         posts: [...this.state.posts].filter((_, indX) => indX !== index),
       })
-    )
+    }
   }
 
-  deleteCompletedPost = (): void => {
+  deleteCompletedPost = async () => {
     const getDeleteItem = this.state.posts.filter(
-      (item: IUser) => item.userId > 1
+      (item: IPost) => item.userId > 1
     )
-
-    getDeleteItem.forEach((item: IUser) =>
-      sendRequest({ method: 'DELETE', path: `${URL_POSTS}${item.id}` }).then(
-        () => {
-          this.setState({
-            posts: this.state.posts.filter((item) => item.userId === 1),
-          })
-        }
+    const filterCompetedPosts = (): void => {
+      this.setState({
+        posts: this.state.posts.filter((item) => item.userId === 1),
+      })
+    }
+    const onSuccess = (filter: () => void) => {
+      getDeleteItem.forEach((item: IPost) =>
+        sendRequest({ method: 'DELETE', path: `/posts/${item.id}` }).then(() =>
+          filter()
+        )
       )
-    )
+    }
+
+    onSuccess(filterCompetedPosts)
   }
 
   togglePost = (id: number, changeUserId: number): void => {
@@ -119,5 +131,5 @@ class PostsProvider extends Component<PortalProps, { posts: IUser[] }> {
   }
 }
 
-export default IUser
+export default IPost
 export { PostsProvider, PostsContext }

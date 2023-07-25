@@ -1,5 +1,5 @@
-import { Component } from 'react'
-import { PostsContext } from './context/PostsContext'
+import { Component, Context } from 'react'
+import { IContext, PostsContext } from './context/PostsContext'
 
 class InputPosts extends Component {
   state = {
@@ -7,16 +7,16 @@ class InputPosts extends Component {
   }
 
   static contextType = PostsContext
-  context!: React.ContextType<typeof PostsContext>
+  context!: React.ContextType<Context<IContext>>
 
-  onSubmitForm(event: React.FormEvent<HTMLFormElement>): void {
+  onSubmitForm = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
   }
   clickBtn = (): void => {
     this.context.addPost(this.state.text)
     this.setState({ text: '' })
   }
-  onChange(e: React.ChangeEvent<HTMLInputElement>) {
+  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ text: e.target.value })
   }
   render(): JSX.Element {
