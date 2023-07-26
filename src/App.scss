@@ -1,0 +1,83 @@
+.App {
+  text-align: center;
+  margin: 30px auto;
+}
+
+.App h1 {
+  font-size: 7.5rem;
+  color: lightslategray;
+}
+.wrapperUl {
+  margin: 20px auto;
+  width: 50%;
+}
+
+.wrapperUl li {
+  padding: 5px 5px;
+  margin: 5px auto;
+
+  display: flex;
+  justify-content: space-between;
+
+  list-style-type: none;
+  border: 2px solid lightgreen;
+  border-radius: 10px;
+}
+
+.icon {
+  text-align: right;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.formAddPost input {
+  width: 30%;
+  height: 30px;
+  margin: 10px 5px;
+  font-size: 20px;
+}
+
+.formAddPost button {
+  height: 25px;
+  cursor: pointer;
+  background: lightblue;
+}
+.formAddPost button:hover {
+  background-color: lightgreen;
+}
+.checkBox {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.deleteIcon {
+  width: 70px;
+  height: 50px;
+  cursor: pointer;
+}
+.deleteIcon:hover {
+  background-color: lightgray;
+}
+
+.wrapperForSinglePage {
+  margin: 50px 50px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 30px;
+}
+.wrapperForSinglePage div {
+  font-size: 25px;
+  color: lightsalmon;
+}
+.wrapperForSinglePage div span {
+  color: lightseagreen;
+  font-size: 35px;
+}
+.wrapperForSinglePage button {
+  width: 100px;
+  height: 50px;
+  cursor: pointer;
+}
